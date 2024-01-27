@@ -1,0 +1,49 @@
+//c++
+/**************************************************************************/
+/*************************INTERACTOR***************************************/
+/**************************************************************************/
+struct Interactor {
+    int hiddenNumber;
+    int queries_till_now;
+    int limit;
+    bool printInteraction;
+    vector<int>v;
+    bool hiddenNumberStaus;
+    Interactor(vector<int>temp, int n) {
+        hiddenNumber = genenrate_random(1, n);
+        v = temp;
+        v[hiddenNumber - 1]++;
+        queries_till_now = 0;
+        limit = 30;
+        printInteraction = false;
+    }
+    void check() {
+        if (queries_till_now > limit) {
+            cout << queries_till_now << " are exceed ";
+            cout << "Failed at";
+            return exit(1);
+        }
+    }
+    int make_query(vector<int>&temp) {
+        check();
+        // cout << x << endl;
+        queries_till_now++;
+        int ans = 0;
+        for (int i = 0; i < temp.size(); i++) {
+            ans += v[temp[i]];
+        }
+        return ans;
+
+    }
+    void validOutput(int x) {
+        if (x == hiddenNumber) {
+            cout << "Pass" << endl;
+            return;
+        }
+        cout << "fail" << endl;
+        cout << ": index was " << hiddenNumber << " not " << x;
+        return exit(1);
+    }
+};
+/**************************************************************************/
+/**************************************************************************/
