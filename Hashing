@@ -1,0 +1,55 @@
+struct Hashing {
+    string s;
+    int n;
+    int primes;
+    ll p = 30;
+    vector<ll>primesHash =  {1000000009};
+    vector<vector<ll>>prefixHash;
+    vector<vector<ll>>powerOfP;
+    vector<vector<ll>>inversePowerOfP;
+    Hashing(string &queryString) {
+        s = queryString;
+        n = s.size();
+        primes = primesHash.size();
+        prefixHash.resize(primes);
+        powerOfP.resize(primes);
+        inversePowerOfP.resize(primes);
+        calculatePowersAndInversePowersOfP();
+        calculatePrefixHashes();
+    }
+    void calculatePowersAndInversePowersOfP() {
+        for (int i = 0; i < primes; i++) {
+            powerOfP[i].resize(n);
+            inversePowerOfP[i].resize(n);
+            ll power = 1;
+            for (int j = 0; j < n; j++) {
+                powerOfP[i][j] = power;
+                power = (power * p) % primesHash[i];
+            }
+            inversePowerOfP[i][n - 1] = inverse(powerOfP[i][n - 1], primesHash[i]);
+            for (int j = n - 2; j >= 0; j--) {
+                inversePowerOfP[i][j] = (inversePowerOfP[i][j + 1] * p) % primesHash[i];
+            }
+        }
+    }
+    void calculatePrefixHashes() {
+        for (int i = 0; i < primes; i++) {
+            prefixHash[i].resize(n);
+            ll hashSoFar = 0;
+            for (int j = 0; j < n; j++) {
+                hashSoFar = (hashSoFar + (s[j] - 'a' + 1) * powerOfP[i][j]) % primesHash[i];
+                prefixHash[i][j] = hashSoFar;
+            }
+        }
+    }
+    vector<ll>substringHash(ll l, ll r) {
+        vector<ll>ans;
+        for (int i = 0; i < primes; i++) {
+            ll val1 = prefixHash[i][r];
+            ll val2 = l > 0 ? prefixHash[i][l - 1] : 0ll;
+            ll val3 = ((val1 - val2 + primesHash[i]) * inversePowerOfP[i][l]) % primesHash[i];
+            ans.push_back(val3);
+        }
+        return ans;
+    }
+};
