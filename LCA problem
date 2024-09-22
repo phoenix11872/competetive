@@ -1,0 +1,26 @@
+
+int KthParent(int x, int k, vector<vector<int>>&parents, int maxPower) {
+    for (int i = 0; i < maxPower; i++) {
+        if ((k >> i) & 1) {
+            x = parents[i][x];
+            if (x == -1)return x;
+        }
+    }
+    return x;
+}
+
+int LCA(int a, int b, vector<vector<int>>&parents, vector<int>&level, int maxPower) {
+    if (level[a] > level[b]) {
+        a = KthParent(a, level[a] - level[b], parents, maxPower);
+    } else {
+        b = KthParent(b, level[b] - level[a], parents, maxPower);
+    }
+    if (a == b)return a;
+    for (int i = maxPower - 1; i >= 0; i--) {
+        if (parents[i][a] != parents[i][b]) {
+            a = parents[i][a];
+            b = parents[i][b];
+        }
+    }
+    return parents[0][a];
+}
