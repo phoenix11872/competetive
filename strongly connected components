@@ -1,0 +1,42 @@
+
+const int N = 1e5 + 5;
+vector<vector<int>>adj(N + 1), radj(N + 1);
+vector<int>todo, comps, comp(N, -1), used(N);
+struct SCC {
+
+    void ae(int x, int y) { //x->y
+        adj[x].push_back(y);
+        radj[y].push_back(x);
+    }
+    void dfs(int x) {
+        used[x] = 1;
+        for (auto c : adj[x]) {
+            if (!used[c]) {
+                dfs(c);
+            }
+        }
+        todo.push_back(x);
+    }
+    void dfs2(int x, int v) {
+        comp[x] = v;
+        for (auto c : radj[x]) {
+            if (comp[c] == -1) {
+                dfs2(c, v);
+            }
+        }
+    }
+    void gen(int _n) {
+        for (int i = 1; i <= _n; i++) {
+            if (!used[i]) {
+                dfs(i);
+            }
+        }
+        reverse(todo.begin(), todo.end());
+        for (auto x : todo) {
+            if (comp[x] == -1) {
+                dfs2(x, x);
+                comps.push_back(x);
+            }
+        }
+    }
+};
